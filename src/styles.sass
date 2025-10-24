@@ -1,0 +1,67 @@
+@use './styles/_variables' as *
+@use './styles/theme_material' as *
+@use './styles/_button-styles'
+@use './styles/_table-styles'
+@use './styles/_card-styles'
+
+@tailwind base
+@tailwind components
+@tailwind utilities
+
+html, body
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif
+  height: 100%
+  overflow-y: auto
+  margin: 0
+
+.contenedor
+  display: flex
+  flex-direction: column
+  min-height: 100vh
+  overflow: visible     
+
+  &__header
+    position: sticky        
+    top: 0
+    z-index: 10
+    background: #fff
+    box-shadow: 0 2px 6px rgba(0,0,0,.08)
+
+  &__body
+    overflow: visible
+    padding: 2rem
+    
+/* === CDK Overlay: baseline sano + z-index alto === */
+
+/* Contenedor raíz de overlays (cubre toda la ventana) */
+.cdk-overlay-container
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 2000            // sube si tu header usa z-index alto
+  pointer-events: none
+
+/* Wrapper que centra/posiciona los paneles dentro del container */
+.cdk-global-overlay-wrapper
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  pointer-events: none
+
+/* Cada panel flotante (el del mat-select, dialogs, menus, etc.) */
+.cdk-overlay-pane
+  position: absolute
+  box-sizing: border-box
+  pointer-events: auto
+  z-index: 2000
+
+/* Backdrops: deben cubrir toda la pantalla y recibir clics */
+.cdk-overlay-backdrop,
+.cdk-overlay-transparent-backdrop
+  position: fixed
+  inset: 0
+  pointer-events: auto

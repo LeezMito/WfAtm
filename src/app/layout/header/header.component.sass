@@ -1,0 +1,34 @@
+.header
+  position: fixed      
+  top: 0
+  left: 0
+  width: 100%
+  height: fit-content         
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 0 1rem 0 0
+  background-color: var(--color-secondary-200, #fff) 
+  z-index: 1000        
+  box-shadow: 0 2px 6px rgba(0,0,0,.1)
+
+  &__logo 
+    background: #ea1d25
+    img
+      height: 100%
+
+  &__perfil
+    display: flex
+    align-items: center
+    gap: 0.5rem
+
+    img
+      height: 32px
+      width: 32px
+      border-radius: 50%
+
+.perfil
+  display: flex
+  flex-direction: column
+  align-items: flex-end
+  padding-right: 0.5rem

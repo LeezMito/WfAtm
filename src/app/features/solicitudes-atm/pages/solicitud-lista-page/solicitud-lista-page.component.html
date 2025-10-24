@@ -1,0 +1,63 @@
+<section class="card">
+  <div class="card__header">
+    <div class="card__title">Alta de ATM</div>
+    <div class="card__subtitle">Configura el tipo de ATM para iniciar la solicitud</div>
+  </div>
+
+  <div class="card__body">
+    <mat-form-field appearance="outline" class="card__field w-full">
+      <mat-label>Tipo de ATM</mat-label>
+      <input
+        matInput
+        placeholder="Ej. Remoto, Sucursal, Lobby..."
+        [formControl]="tipoAtmCtl"
+        inputmode="text"
+        autocomplete="off"
+        aria-label="Tipo de ATM" />
+      <mat-hint>Puedes escribir el tipo exacto</mat-hint>
+    </mat-form-field>
+  </div>
+
+  <div class="card__actions">
+    <button
+      type="button"
+      appButtonStyle="primary-fill"
+      class="card__button"
+      (click)="onIniciarSolicitud()">
+      <span class="material-symbols-rounded">rocket_launch</span>
+      Iniciar solicitud
+    </button>
+  </div>
+</section>
+
+<mat-tab-group [selectedIndex]="tabIndex()" (selectedIndexChange)="tabIndex.set($event)">
+  <mat-tab [label]="'Solicitudes del mes ' + mesAnio() + ' en curso'">
+    <app-table-smart
+      [rows]="rowsMes()"
+      [columns]="columns"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      [initialPageSize]="10"
+      [enableClientFiltering]="true"
+      (pdfClick)="onPdfMes()"
+      (xlsxClick)="onXlsxMes()"
+      (filterChange)="onFilterMes($event)"
+      (pageChange)="onPageMes($event)"
+      (actionClick)="onActionMes($event)"
+      (sortChange)="onSortMes($event)"></app-table-smart>
+  </mat-tab>
+
+  <mat-tab label="Solicitudes pendientes">
+    <app-table-smart
+      [rows]="rowsPend()"
+      [columns]="columns"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      [initialPageSize]="10"
+      [enableClientFiltering]="true"
+      (pdfClick)="onPdfPend()"
+      (xlsxClick)="onXlsxPend()"
+      (filterChange)="onFilterPend($event)"
+      (pageChange)="onPagePend($event)"
+      (actionClick)="onActionPend($event)"
+      (sortChange)="onSortPend($event)"></app-table-smart>
+  </mat-tab>
+</mat-tab-group>
