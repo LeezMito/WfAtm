@@ -1,0 +1,181 @@
+@use './styles/_variables' as *
+@use './styles/theme_material' as *
+@use './styles/_button-styles'
+@use './styles/_table-styles'
+@use './styles/_card-styles'
+@use './styles/_snackBar-styles'
+
+@tailwind base
+@tailwind components
+@tailwind utilities
+
+html, body
+  font-family: 'Inter', 'Segoe UI', Roboto, sans-serif
+  height: 100%
+  overflow-y: auto
+  margin: 0
+
+.contenedor
+  display: flex
+  flex-direction: column
+  min-height: 100vh
+  overflow: visible     
+
+  &__header
+    position: sticky        
+    top: 0
+    z-index: 10
+    background: #fff
+    box-shadow: 0 2px 6px rgba(0,0,0,.08)
+
+  &__body
+    overflow: visible
+    padding: 2rem
+    
+.cdk-overlay-container
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 2000          
+  pointer-events: none
+
+.cdk-global-overlay-wrapper
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  pointer-events: none
+
+.cdk-overlay-pane
+  position: absolute
+  box-sizing: border-box
+  pointer-events: auto
+  z-index: 2000
+
+.cdk-overlay-backdrop,
+.cdk-overlay-transparent-backdrop
+  position: fixed
+  inset: 0
+  pointer-events: auto
+
+.mat-mdc-tab-group .mdc-tab,
+.mat-mdc-tab-nav-bar .mdc-tab
+  position: relative !important
+  overflow: hidden !important
+  isolation: isolate !important
+  flex: 0 0 auto !important
+
+.mat-mdc-tab-group .mdc-tab .mdc-tab__content,
+.mat-mdc-tab-nav-bar .mdc-tab .mdc-tab__content
+  position: relative
+  z-index: 1
+
+.mat-mdc-tab-group .mdc-tab .mdc-tab-indicator,
+.mat-mdc-tab-nav-bar .mdc-tab .mdc-tab-indicator
+  position: absolute
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: 2
+
+.mat-mdc-tab-group .mat-mdc-tab-ripple,
+.mat-mdc-tab-nav-bar .mat-mdc-tab-ripple,
+.mat-mdc-tab-group .mdc-tab .mdc-tab__ripple,
+.mat-mdc-tab-nav-bar .mdc-tab .mdc-tab__ripple
+  position: absolute !important
+  inset: 0 !important
+  width: 100% !important
+  height: 100% !important
+  z-index: 0 !important
+  pointer-events: none
+
+.mat-mdc-tab-group .mat-mdc-tab-labels .mdc-tab,
+.mat-mdc-tab-nav-bar .mat-mdc-tab-labels .mdc-tab
+  flex: 0 0 auto !important
+
+.mat-mdc-tab-group .mat-mdc-tab-body-wrapper,
+.mat-mdc-tab-nav-bar + .mat-mdc-tab-body-wrapper
+  padding-top: 1rem
+
+
+.mat-mdc-form-field,
+.mat-mdc-text-field-wrapper,
+.mdc-text-field
+  border: none !important
+  box-shadow: none !important
+  outline: 0 !important
+
+.mat-mdc-form-field.ng-invalid,
+.mat-mdc-text-field-wrapper.ng-invalid,
+.mdc-text-field.ng-invalid,
+form .mat-mdc-form-field:has(input.ng-invalid),
+form .mat-mdc-form-field:has(textarea.ng-invalid),
+form .mat-mdc-form-field:has(select.ng-invalid)
+  border: none !important
+  box-shadow: none !important
+
+form .ng-invalid.ng-touched
+  border: none !important
+  box-shadow: none !important
+
+.mat-mdc-form-field-subscript-wrapper
+  display: block !important
+  visibility: visible !important
+  opacity: 1 !important
+
+.mat-mdc-form-field-error
+  display: block !important
+  color: var(--color-primary-500) !important
+  font-size: .75rem
+  line-height: 1.2
+
+.mat-mdc-form-field.mat-mdc-form-field-invalid
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing
+    border-color: var(--color-primary-500)
+
+.mat-mdc-progress-bar
+  --mdc-linear-progress-active-indicator-color: var(--color-primary-500)
+  --mdc-linear-progress-track-color: var(--color-secondary-200)
+  --mdc-linear-progress-active-indicator-height: 15px
+  --mdc-linear-progress-track-height: 15px
+
+.mat-mdc-progress-bar
+  height: 15px !important
+  border-radius: 8px
+  overflow: hidden
+
+  transition: height .3s ease, transform .3s ease
+
+  &:hover
+    transform: scaleY(1.15)
+
+.step__progress
+  position: relative
+  display: block
+  width: 100%
+  height: 8px
+  margin-top: .35rem
+  background: var(--color-secondary-200)
+  border-radius: 999px
+  overflow: hidden
+
+.step__progress-bar
+  position: absolute
+  left: 0
+  top: 0
+  height: 100%
+  width: 0%
+  background: var(--color-primary-500)
+  transition: width .25s ease
+
+.step__progress-text
+  position: absolute
+  right: 8px
+  top: -18px
+  font-size: .72rem
+  color: var(--color-secondary-400)

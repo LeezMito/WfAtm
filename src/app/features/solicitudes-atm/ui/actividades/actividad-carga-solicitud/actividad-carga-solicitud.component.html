@@ -1,0 +1,20 @@
+<app-template-actividad [title]="'Carga solicitud'" [inicia]="iniciaFecha">
+  @if (formDatosStatus.visible) {
+  <app-dynamic-form
+    [titulo]="'Datos cliente'"
+    [atendidoPor]="'Canal ATM'"
+    [campos]="camposDatos()"
+    [controller]="dfCtrl.datos"
+    (fieldChanged)="onFieldChanged($event)"
+    (save)="onGuardar('datos', $event)"></app-dynamic-form>
+  } @if (formUbicacionStatus.visible) {
+  <app-dynamic-form
+    [titulo]="'Ubicación'"
+    [atendidoPor]="'Canal ATM'"
+    [controller]="dfCtrl.ubicacion"
+    [campos]="camposUbicacion()"
+    (fieldChanged)="onFieldChanged($event)"
+    (btnClick)="onClick($event)"
+    (save)="onGuardar('ubicacion', $event)"></app-dynamic-form>
+  }
+</app-template-actividad>

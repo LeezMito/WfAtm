@@ -1,0 +1,7 @@
+<app-template-actividad [title]="'Validación negocio'" [inicia]="iniciaFecha">
+  <app-dynamic-form
+    [titulo]="'Validacion negocio ATM'"
+    [atendidoPor]="'Canal ATM'"
+    [campos]="camposValida()"
+    (save)="onGuardar($event)"></app-dynamic-form>
+</app-template-actividad>

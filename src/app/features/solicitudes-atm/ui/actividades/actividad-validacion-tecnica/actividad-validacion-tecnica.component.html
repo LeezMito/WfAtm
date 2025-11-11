@@ -1,0 +1,35 @@
+<app-template-actividad [title]="'Validación técnica'" [inicia]="iniciaFecha">
+  @if (formDatos.visible) {
+  <app-dynamic-form
+    [titulo]="'Datos ATM'"
+    [atendidoPor]="'Operaciones'"
+    [campos]="camposDatos()"
+    [controller]="dfCtrl"
+    (fieldChanged)="onFieldChanged($event)"
+    (save)="onGuardar('datosAtm', $event)"></app-dynamic-form>
+  } @if( formVisita.visible) {
+  <app-dynamic-form
+    [titulo]="'Visita al sitio'"
+    [atendidoPor]="'Operaciones'"
+    [campos]="camposVisita()"
+    [controller]="dfCtrl"
+    (fieldChanged)="onFieldChanged($event)"
+    (save)="onGuardar('visitaSitio', $event)"></app-dynamic-form>
+  } @if( formValida.visible) {
+  <app-dynamic-form
+    [titulo]="'Valida cobertura enlace'"
+    [atendidoPor]="'Operaciones'"
+    [campos]="camposValida()"
+    [controller]="dfCtrl"
+    (fieldChanged)="onFieldChanged($event)"
+    (save)="onGuardar('validaCobertura', $event)"></app-dynamic-form>
+  } @if( formCobertura.visible) {
+  <app-dynamic-form
+    [titulo]="'Valida cobertura y CTV'"
+    [atendidoPor]="'Pron. Efectivo'"
+    [campos]="camposCobertura()"
+    [controller]="dfCtrl"
+    (fieldChanged)="onFieldChanged($event)"
+    (save)="onGuardar('coberturaCtv', $event)"></app-dynamic-form>
+  }
+</app-template-actividad>

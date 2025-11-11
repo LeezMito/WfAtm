@@ -1,0 +1,191 @@
+<section class="bg-gray-50 rounded-md gap-3 flex flex-col my-4">
+  <div class="bg-secondary-50 rounded-t-md w-full">
+    <h5 class="m-4">{{ titulo() }}</h5>
+  </div>
+  <div class="flex justify-between gap-2 items-center">
+    <p class="m-4">Atendido por: {{ atendidoPor() }}</p>
+    <div class="flex items-center w-[300px] mr-4 gap-3">
+      <span>Avance</span>
+      <span
+        class="step__progress"
+        role="progressbar"
+        [attr.aria-valuemin]="0"
+        [attr.aria-valuemax]="100"
+        [attr.aria-valuenow]="0"
+        [attr.aria-label]="'Progreso de ' + titulo()">
+        <span class="step__progress-bar" [style.width.%]="avance()"></span>
+        <span class="step__progress-text">{{ avance() }}%</span>
+      </span>
+    </div>
+  </div>
+
+  <form
+    class="grid grid-cols-1 sm:grid-cols-1 xl:grid-cols-2 xxl:grid-cols-3 gap-3 p-3"
+    [formGroup]="form"
+    novalidate>
+    @for (cfg of campos(); track cfg.key) {
+    <div
+      *ngIf="hasCtrl(cfg.key)"
+      class="w-[100%] min-h-[68px] sm:min-h-[84px] md:min-h-[100px]"
+      [ngClass]="{
+        'sm:col-span-1 xl:col-span-2': cfg.tipo === 'textarea',
+        'sm:col-span-1': cfg.tipo === 'file'
+      }">
+      @if (cfg.tipo === 'input') {
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+        subscriptSizing="dynamic"
+        floatLabel="auto">
+        <mat-label class="truncate">{{ cfg.label }}</mat-label>
+        <input
+          matInput
+          [formControlName]="cfg.key"
+          [type]="inputType(cfg)"
+          [attr.placeholder]="cfg.placeholder || ''"
+          [attr.min]="cfg.minValue ?? null"
+          [attr.max]="cfg.maxValue ?? null"
+          [maxlength]="cfg.maxLength ?? null"
+          (change)="fieldChanged.emit({ key: cfg.key, value: form.get(cfg.key)?.value })" />
+        <mat-hint *ngIf="cfg.maxLength" align="end" class="hidden sm:block">
+          {{ form.get(cfg.key)?.value?.length ?? 0 }}/{{ cfg.maxLength }}
+        </mat-hint>
+        <mat-error *ngIf="form.get(cfg.key)?.hasError('required') && form.get(cfg.key)?.touched">
+          Campo obligatorio.
+        </mat-error>
+        <mat-error *ngIf="form.get(cfg.key)?.hasError('maxlength') && form.get(cfg.key)?.touched">
+          Supera la longitud máxima.
+        </mat-error>
+        <mat-error *ngIf="form.get(cfg.key)?.hasError('minlength') && form.get(cfg.key)?.touched">
+          No cumple la longitud mínima.
+        </mat-error>
+        <mat-error *ngIf="form.get(cfg.key)?.hasError('max') && form.get(cfg.key)?.touched">
+          Valor mayor al permitido.
+        </mat-error>
+        <mat-error *ngIf="form.get(cfg.key)?.hasError('min') && form.get(cfg.key)?.touched">
+          Valor menor al permitido.
+        </mat-error>
+      </mat-form-field>
+      } @if (cfg.tipo === 'textarea') {
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+        subscriptSizing="dynamic"
+        floatLabel="auto">
+        <mat-label class="truncate">{{ cfg.label }}</mat-label>
+        <textarea
+          matInput
+          [attr.placeholder]="cfg.placeholder || ''"
+          [formControlName]="cfg.key"
+          [maxlength]="cfg.maxLength ?? null"
+          rows="4"
+          (change)="
+            fieldChanged.emit({ key: cfg.key, value: form.get(cfg.key)?.value })
+          "></textarea>
+        <mat-hint *ngIf="cfg.maxLength" align="end" class="hidden sm:block">
+          {{ form.get(cfg.key)?.value?.length ?? 0 }}/{{ cfg.maxLength }}
+        </mat-hint>
+        <mat-error *ngIf="form.get(cfg.key)?.hasError('required') && form.get(cfg.key)?.touched">
+          Campo obligatorio.
+        </mat-error>
+        <mat-error *ngIf="form.get(cfg.key)?.hasError('maxlength') && form.get(cfg.key)?.touched">
+          Supera la longitud máxima.
+        </mat-error>
+        <mat-error *ngIf="form.get(cfg.key)?.hasError('minlength') && form.get(cfg.key)?.touched">
+          No cumple la longitud mínima.
+        </mat-error>
+      </mat-form-field>
+      } @if (cfg.tipo === 'select') {
+      <mat-form-field
+        appearance="outline"
+        class="w-full"
+        subscriptSizing="dynamic"
+        floatLabel="auto">
+        <mat-label class="truncate">{{ cfg.label }}</mat-label>
+        <mat-select
+          [formControlName]="cfg.key"
+          (selectionChange)="fieldChanged.emit({ key: cfg.key, value: $event.value })">
+          @if (!cfg.isRequired) {
+          <mat-option [value]="''">— Selecciona —</mat-option>
+          } @for (opt of (cfg.options ?? []); track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-error *ngIf="form.get(cfg.key)?.hasError('required') && form.get(cfg.key)?.touched">
+          Campo obligatorio.
+        </mat-error>
+      </mat-form-field>
+      } @if (cfg.tipo === 'checkbox') {
+      <div class="w-full flex items-center gap-3 py-1">
+        <mat-checkbox [formControlName]="cfg.key">
+          {{ cfg.label }}
+        </mat-checkbox>
+        <mat-error
+          class="ml-1"
+          *ngIf="
+            form.get(cfg.key)?.touched &&
+            (form.get(cfg.key)?.hasError('required') || form.get(cfg.key)?.hasError('requiredTrue'))
+          ">
+          Campo obligatorio.
+        </mat-error>
+      </div>
+      } @if (cfg.tipo === 'file') {
+      <div class="w-full">
+        <span class="block text-sm font-medium text-gray-700 mb-1">
+          {{ cfg.label }} {{ isRequiredOf(cfg.key) ? '*' : '' }}
+        </span>
+        <div class="flex flex-wrap items-center gap-3 min-w-0">
+          <input
+            #fileInput
+            class="hidden"
+            type="file"
+            [attr.accept]="acceptAttr(cfg)"
+            (change)="onFileChange(cfg, $event)" />
+          <button
+            type="button"
+            (click)="fileInput.click()"
+            class="inline-flex items-center gap-2 rounded-xl px-4 py-2 border border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition">
+            <span class="material-symbols-outlined">upload_file</span>
+            Elegir archivo
+          </button>
+          <span class="text-sm text-gray-600 truncate flex-1 min-w-0">
+            {{ form.get(cfg.key)?.value || 'Ningún archivo seleccionado' }}
+          </span>
+        </div>
+        @if (form.get(cfg.key)?.touched && form.get(cfg.key)?.invalid) {
+        <small class="mt-1 block text-red-600">Archivo requerido.</small>
+        }
+      </div>
+      } @if (cfg.tipo === 'button') {
+      <div
+        class="w-full flex"
+        [ngClass]="{
+          'justify-start': (cfg.align || 'right') === 'left',
+          'justify-center': cfg.align === 'center',
+          'justify-end': (cfg.align || 'right') === 'right'
+        }">
+        <button
+          [disabled]="!!cfg.disabled"
+          (click)="onButtonClick(cfg, $event)"
+          class="w-full md:w-auto"
+          [appButtonStyle]="cfg.style || 'primary-fill'">
+          <span *ngIf="cfg.icon" class="material-symbols-outlined">{{ cfg.icon }}</span>
+          {{ cfg.label }}
+        </button>
+      </div>
+      }
+    </div>
+    }
+
+    <div class="col-span-full flex md:justify-end">
+      <button
+        appButtonStyle="accent-fill"
+        type="button"
+        (click)="handleSave()"
+        class="w-full md:w-auto">
+        <span class="material-symbols-outlined">save</span>
+        Guardar
+      </button>
+    </div>
+  </form>
+</section>

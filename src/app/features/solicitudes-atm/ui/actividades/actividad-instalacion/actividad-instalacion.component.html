@@ -1,0 +1,19 @@
+<app-template-actividad [title]="'Instalación'" [inicia]="iniciaFecha">
+  <app-dynamic-form
+    [titulo]="'Lista de actividades'"
+    [atendidoPor]="'Operaciones'"
+    [campos]="camposActividades()"
+    (save)="onGuardar($event)"></app-dynamic-form>
+
+  <app-dynamic-form
+    [titulo]="'Instalación de ATM '"
+    [atendidoPor]="'Operaciones'"
+    [campos]="camposInstalacionOperaciones()"
+    (save)="onGuardar($event)"></app-dynamic-form>
+
+  <app-dynamic-form
+    [titulo]="'Instalación de ATM '"
+    [atendidoPor]="'Arrendamientos'"
+    [campos]="camposInstalacionActividades()"
+    (save)="onGuardar($event)"></app-dynamic-form>
+</app-template-actividad>

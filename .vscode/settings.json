@@ -1,0 +1,21 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always",
+    "source.fixAll.eslint": "always",
+    "source.organizeImports": "always"
+  },
+  "files.eol": "\n",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "eslint.validate": ["typescript", "html"],
+  "eslint.alwaysShowStatus": true,
+  "prettier.requireConfig": true,
+  "html.format.wrapAttributes": "auto",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "angular.enable-strict-template-checks": true,
+  "css.validate": true,
+  "tailwindCSS.experimental.classRegex": [
+    ["tw`([^`]*)", "tw\\.[^`]+`([^`]*)", "cn\\(([^)]*)\\)"]
+  ]
+}

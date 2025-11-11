@@ -1,0 +1,78 @@
+<div class="wizard">
+  <aside class="wizard__nav">
+    <ol class="stepper-vertical" role="list">
+      <li
+        *ngFor="let step of steps(); let i = index; trackBy: trackById"
+        class="actividades"
+        role="listitem">
+        <section class="flex flex-col min-h-[100px]">
+          <button
+            type="button"
+            class="step"
+            [class.activo]="step.activo"
+            [disabled]="step.bloqueado"
+            [attr.aria-current]="step.activo ? 'step' : null"
+            [attr.aria-disabled]="step.bloqueado ? 'true' : null"
+            (click)="onActivate(step.id)"
+            (keydown.enter)="onActivate(step.id)"
+            (keydown.space)="onActivate(step.id); $event.preventDefault()">
+            <span class="step__numero" aria-hidden="true">{{ step.id }}</span>
+            <span class="step__info">
+              <span class="step__nombre">{{ step.nombre }}</span>
+              <span class="text-xs text-red">{{ step.visiblePara.join(', ') }}</span>
+              <span
+                class="step__progress"
+                role="progressbar"
+                [attr.aria-valuemin]="0"
+                [attr.aria-valuemax]="100"
+                [attr.aria-valuenow]="70"
+                [attr.aria-label]="'Progreso de ' + step.nombre">
+                <span class="step__progress-bar" [style.width.%]="step.progreso"></span>
+                <span class="step__progress-text">{{ step.progreso }}%</span>
+              </span>
+            </span>
+          </button>
+          <div *ngIf="i + 1 !== steps().length" class="step__linea" aria-hidden="true"></div>
+        </section>
+        <section class="w-full">
+          @if(!step.bloqueado){
+          <ng-container [ngSwitch]="step.id">
+            <app-actividad-carga-solicitud
+              (updAvance)="updAvance(step.id, $event)"
+              (avanzarStep)="avanzarStep(step.id, $event)"
+              [modo]="modo()"
+              [idSolicitud]="this.idSolicitud()"
+              *ngSwitchCase="CAT_ACTIVIDADES.CARGA_SOLICITUD"></app-actividad-carga-solicitud>
+
+            <app-actividad-validacion-tecnica
+              (updAvance)="updAvance(step.id, $event)"
+              *ngSwitchCase="CAT_ACTIVIDADES.VALIDACION_TECNICA"></app-actividad-validacion-tecnica>
+
+            <app-actividad-validacion-visita
+              (updAvance)="updAvance(step.id, $event)"
+              *ngSwitchCase="CAT_ACTIVIDADES.VALIDACION_VISITA"></app-actividad-validacion-visita>
+
+            <app-actividad-validacion-operaciones
+              (updAvance)="updAvance(step.id, $event)"
+              *ngSwitchCase="
+                CAT_ACTIVIDADES.VALIDACION_OPERACIONES
+              "></app-actividad-validacion-operaciones>
+
+            <app-actividad-validacion-negocio
+              (updAvance)="updAvance(step.id, $event)"
+              *ngSwitchCase="CAT_ACTIVIDADES.VALIDACION_NEGOCIO"></app-actividad-validacion-negocio>
+
+            <app-actividad-instalacion
+              (updAvance)="updAvance(step.id, $event)"
+              *ngSwitchCase="CAT_ACTIVIDADES.INSTALACION"></app-actividad-instalacion>
+
+            <app-actividad-alta-atm
+              (updAvance)="updAvance(step.id, $event)"
+              *ngSwitchCase="CAT_ACTIVIDADES.ALTA_ATM"></app-actividad-alta-atm>
+          </ng-container>
+          }
+        </section>
+      </li>
+    </ol>
+  </aside>
+</div>

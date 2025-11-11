@@ -1,0 +1,31 @@
+<article class="sla">
+  <section class="flex justify-between">
+    <div class="sla__titulo w-full">
+      <section class="bg-red">
+        <h3 class="titulo">{{ title() }}</h3>
+      </section>
+      <section class="flex justify-between items-center w-full">
+        <p class="text-black">
+          <strong>{{ titleInicia() }}</strong>
+          {{ inicia() }}
+        </p>
+      </section>
+    </div>
+    <div class="px-2 flex items-center justify-center">
+      <span class="material-symbols-outlined text-[2.5rem] text-green-400">calendar_clock</span>
+    </div>
+  </section>
+  <section class="py-2 flex justify-end">
+    <button appButtonStyle="accent-outline" (click)="toggleForm()" [attr.aria-expanded]="isOpen()">
+      <span class="material-symbols-outlined">
+        {{ isOpen() ? 'stat_1' : 'stat_minus_1' }}
+      </span>
+      {{ isOpen() ? 'Ver menos' : 'Ver más' }}
+    </button>
+  </section>
+  @if (isOpen()) {
+  <section [@reveal] class="sla__contenido mt-2">
+    <ng-content></ng-content>
+  </section>
+  }
+</article>

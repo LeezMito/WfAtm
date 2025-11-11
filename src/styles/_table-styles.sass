@@ -1,0 +1,95 @@
+@use '_variables.sass' as *
+
+.table-wrap
+  width: 100%
+  display: block
+  overflow-x: auto 
+  -webkit-overflow-scrolling: touch
+  border: 1px solid $border-default
+  border-radius: $radius-lg
+  box-shadow: $shadow-sm
+  background: $bg-surface
+
+  .card & 
+    border: 1px solid $border-default
+    box-shadow: none
+
+table[mat-table]
+  width: 100%
+  min-width: 100%
+  table-layout: fixed
+  border-collapse: collapse
+  background: transparent
+
+  .mat-header-cell, .mat-cell
+    word-wrap: break-word
+    white-space: normal
+    text-align: left
+    padding: $space-3 $space-4
+    font-size: $font-size-sm
+    border-bottom: 1px solid $border-default
+
+.mat-mdc-table
+  width: 100%
+  table-layout: fixed
+  background: transparent
+  overflow: visible
+
+  .mat-mdc-header-row
+    position: sticky
+    top: 0 
+    z-index: 2
+    background: var(--color-secondary-200)
+    font-weight: $font-weight-semibold
+    border-bottom: 1px solid $border-default
+
+  .mat-mdc-row
+    &:nth-child(even)
+      background: var(--color-secondary-100)
+    &:hover
+      background: var(--color-secondary-100)
+      cursor: pointer
+
+  .mat-sort-header-button
+    color: $text-primary
+  .mat-sort-header-arrow
+    color: var(--color-primary)
+
+  .mat-mdc-cell
+    color: $text-secondary
+
+  .mat-mdc-header-cell, .mat-mdc-cell
+    &.mat-column-id
+      min-width: 72px
+      text-align: right
+    &.mat-column-nombre
+      min-width: 200px
+    &.mat-column-monto
+      min-width: 120px
+      text-align: right
+    &.mat-column-estado
+      min-width: 140px
+    &.mat-column-acciones
+      min-width: 140px
+      text-align: center
+
+.mat-mdc-paginator
+  border: 1px solid $border-default
+  border-top: none
+  border-radius: 0 0 $radius-lg $radius-lg
+  background: $bg-surface
+  box-shadow: $shadow-sm
+
+  .mat-mdc-paginator-container
+    padding: $space-2 $space-4
+    color: $text-secondary
+    font-size: $font-size-sm
+
+  .mat-mdc-paginator-range-label,
+  .mat-mdc-paginator-page-size-label
+    color: $text-secondary
+
+  .mat-mdc-icon-button
+    color: var(--color-primary)
+    &:hover
+      background-color: var(--color-primary-100)

@@ -1,0 +1,13 @@
+<app-template-actividad [title]="'Alta ATM'" [inicia]="iniciaFecha">
+  <app-dynamic-form
+    [titulo]="'Alta ATM'"
+    [atendidoPor]="'Operaciones'"
+    [campos]="camposAlta()"
+    (save)="onGuardar($event)"></app-dynamic-form>
+
+  <app-dynamic-form
+    [titulo]="'Acción ATM'"
+    [atendidoPor]="'Operaciones'"
+    [campos]="camposAccion()"
+    (save)="onGuardar($event)"></app-dynamic-form>
+</app-template-actividad>
