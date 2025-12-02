@@ -23,7 +23,7 @@ export const FlujoRemoto: StepActividad[] = [
   {
     id: CAT_ACTIVIDADES.CARGA_SOLICITUD,
     nombre: 'Actividad 1',
-    activo: false,
+    activo: true,
     bloqueado: false,
     visiblePara: ['Super Admin'],
     progreso: 100,
@@ -31,8 +31,8 @@ export const FlujoRemoto: StepActividad[] = [
   {
     id: CAT_ACTIVIDADES.VALIDACION_TECNICA,
     nombre: 'Actividad 2',
-    activo: true,
-    bloqueado: false,
+    activo: false,
+    bloqueado: true,
     visiblePara: ['Super Admin', 'Técnico'],
     progreso: 0,
   },

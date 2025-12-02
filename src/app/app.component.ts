@@ -11,6 +11,4 @@ import { HeaderComponent } from './layout/header/header.component'
   templateUrl: './app.component.html',
   styleUrl: './app.component.sass',
 })
-export class AppComponent {
-  title = 'WfAtm'
-}
+export class AppComponent {}

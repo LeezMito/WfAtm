@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   computed,
@@ -16,21 +17,19 @@ import { MatOptionModule } from '@angular/material/core'
 import { MatFormField, MatFormFieldModule, MatHint, MatLabel } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select'
-import { SortDirection } from '@angular/material/sort'
 import { MatTabGroup, MatTabsModule } from '@angular/material/tabs'
 import { Router } from '@angular/router'
 import { map } from 'rxjs/operators'
 import { ButtonStyleDirective } from '../../../../shared/directives/button/button-style.directive'
 import { RowLike, TableColumn } from '../../../../shared/interfaces/table-smart.interface'
+import { LoggerService } from '../../../../shared/services/logger-service'
 import { TableSmartComponent } from '../../../../shared/ui/table-smart/table-smart.component'
 import { SolicitudApi } from '../../interfaces/servicio-prueba-api.interface'
 import { SolicitudesDataService } from '../../services/solicitudes-data.service'
 
 type Row = Record<string, unknown>
 type FilterEvent = { columns: string[]; query: string }
-type PageEventLike = { pageIndex: number; pageSize: number }
 type ActionEvent<R extends Row = Row> = { actionLabel: string; row: R }
-type SortEvent = { active: string; direction: SortDirection }
 
 @Component({
   selector: 'app-solicitud-lista-page',
@@ -50,14 +49,14 @@ type SortEvent = { active: string; direction: SortDirection }
   ],
   templateUrl: './solicitud-lista-page.component.html',
   styleUrl: './solicitud-lista-page.component.sass',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SolicitudListaPageComponent implements OnInit, AfterViewInit {
-  private router = inject(Router)
-
-  private data = inject(SolicitudesDataService)
+  private readonly router = inject(Router)
+  private readonly data = inject(SolicitudesDataService)
   private readonly destroyRef = inject(DestroyRef)
-
-  private cdr = inject(ChangeDetectorRef)
+  private readonly cdr = inject(ChangeDetectorRef)
+  private readonly logger = inject(LoggerService)
 
   readonly loading = signal<boolean>(false)
   readonly error = signal<string | null>(null)
@@ -69,7 +68,23 @@ export class SolicitudListaPageComponent implements OnInit, AfterViewInit {
   readonly disableTabAnimation = computed(() => this.tabIndex() === 1)
 
   readonly columns: ReadonlyArray<TableColumn> = [
-    { key: 'noSolicitud', title: 'No. Solicitud', sorted: true, includeInFilter: true },
+    {
+      key: 'noSolicitud',
+      title: 'No. Solicitud',
+      sorted: true,
+      includeInFilter: true,
+      icon: 'visibility',
+      haveAction: true,
+      buttonAppearance: 'outline',
+      buttonType: 'secondary',
+    },
+    {
+      key: 'fechaCreacion',
+      title: 'Fecha de Creación',
+      sorted: true,
+      includeInFilter: false,
+      pipe: 'date',
+    },
     { key: 'tipoCajero', title: 'Tipo Cajero', sorted: true, includeInFilter: true },
     { key: 'bucGrupo', title: 'BUC / Grupo', sorted: true, includeInFilter: true },
     {
@@ -113,17 +128,21 @@ export class SolicitudListaPageComponent implements OnInit, AfterViewInit {
 
   tipoAtmCtl = new FormControl<string | null>('remoto')
 
-  private persistTabIndex = effect(() => {
+  private readonly persistTabIndex = effect(() => {
     const v = this.tabIndex()
-    if (typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= 1) {
+    if (typeof v === 'number' && Number.isInteger(v) && v >= 0) {
       if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-        localStorage.setItem(this.tabKey, String(v))
+        try {
+          localStorage.setItem(this.tabKey, String(v))
+        } catch (e) {
+          this.logger.warn('PERSIST TAB INDEX FAILED', { ctx: 'SolicitudLista', data: String(e) })
+        }
       }
     }
   })
+
   private readonly refreshMesOnParams = effect(
     () => {
-      const _ = this.paramsMes()
       const idx = this.tabIndex()
       if (this.loadedMes() && idx === 0) this.refreshMes(this.paramsMes())
     },
@@ -132,7 +151,6 @@ export class SolicitudListaPageComponent implements OnInit, AfterViewInit {
 
   private readonly refreshPendOnParams = effect(
     () => {
-      const _ = this.paramsPend()
       const idx = this.tabIndex()
       if (this.loadedPend() && idx === 1) this.refreshPend(this.paramsPend())
     },
@@ -142,8 +160,10 @@ export class SolicitudListaPageComponent implements OnInit, AfterViewInit {
   private readonly loadOnTabChange = effect(
     () => {
       const idx = this.tabIndex()
-      console.log('[SOLIC-LISTA][TAB-CHANGE]', idx)
-      console.log('[SOLIC-LISTA][TAB-CHANGE][PEND-LOADED]', this.loadedPend())
+      this.logger.debug('TAB-CHANGE', {
+        ctx: 'SolicitudLista',
+        data: { idx, loadedPend: this.loadedPend() },
+      })
       if (idx === 0 && !this.loadedMes()) this.loadMesActual(this.paramsMes())
       if (idx === 1 && !this.loadedPend()) this.loadPendientes(this.paramsPend())
     },
@@ -154,12 +174,18 @@ export class SolicitudListaPageComponent implements OnInit, AfterViewInit {
   private readonly loadedPend = signal(false)
 
   ngOnInit(): void {
-    const saved =
-      typeof window !== 'undefined' && typeof localStorage !== 'undefined'
-        ? localStorage.getItem(this.tabKey)
-        : null
-    const parsed = saved === null ? 0 : Number(saved)
-    this._startIndex = Number.isInteger(parsed) && parsed >= 0 && parsed <= 1 ? parsed : 0
+    let parsed: number | null = null
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      try {
+        const saved = localStorage.getItem(this.tabKey)
+        parsed = saved === null ? null : Number.parseInt(saved, 10)
+      } catch (e) {
+        this.logger.warn('READ TAB INDEX FAILED', { ctx: 'SolicitudLista', data: String(e) })
+        parsed = null
+      }
+    }
+
+    this._startIndex = Number.isFinite(parsed) && parsed !== null ? (parsed as number) : 0
     this.tabIndex.set(-1)
   }
 
@@ -171,6 +197,7 @@ export class SolicitudListaPageComponent implements OnInit, AfterViewInit {
       setTimeout(() => this.tabGroup?.realignInkBar())
     })
   }
+
   loadMesActual(params?: { estatus?: string; region?: string }) {
     this.loading.set(true)
     this.error.set(null)
@@ -191,7 +218,7 @@ export class SolicitudListaPageComponent implements OnInit, AfterViewInit {
           this.loading.set(false)
         },
         error: (err) => {
-          console.error('[SOLIC-LISTA][LOAD-MES-ERROR]', err)
+          this.logger.error('LOAD-MES-ERROR', { ctx: 'SolicitudLista', data: err })
           this.error.set('No se pudo cargar la lista del mes.')
           this.loading.set(false)
         },
@@ -218,7 +245,7 @@ export class SolicitudListaPageComponent implements OnInit, AfterViewInit {
           this.loading.set(false)
         },
         error: (err) => {
-          console.error('[SOLIC-LISTA][LOAD-PEND-ERROR]', err)
+          this.logger.error('LOAD-PEND-ERROR', { ctx: 'SolicitudLista', data: err })
           this.error.set('No se pudo cargar la lista de pendientes.')
           this.loading.set(false)
         },
@@ -243,117 +270,99 @@ export class SolicitudListaPageComponent implements OnInit, AfterViewInit {
   }
 
   onIniciarSolicitud(): void {
-    const __tryId = 'ATM_STARTER_CARD:onIniciarSolicitud'
+    const ctx = 'ATM_STARTER_CARD:onIniciarSolicitud'
     try {
       if (!this.tipoAtmCtl.valid || !this.tipoAtmCtl.value) {
-        console.warn(__tryId, 'Tipo ATM inválido', this.tipoAtmCtl.value)
+        this.logger.warn('Tipo ATM inválido', { ctx, data: { value: this.tipoAtmCtl.value } })
         this.tipoAtmCtl.markAsTouched()
         return
       }
-      console.log(__tryId, 'OK -> Tipo ATM:', this.tipoAtmCtl.value)
+      this.logger.info('OK -> Tipo ATM', { ctx, data: { tipoAtm: this.tipoAtmCtl.value } })
       this.router.navigate(['/solicitudes-atm/nuevo', this.tipoAtmCtl.value])
     } catch (error) {
-      console.error(__tryId, error)
+      this.logger.error('EXCEPTION', { ctx, data: error })
     }
   }
 
   onIniciarActualizar(id: number): void {
-    const __tryId = 'ATM_STARTER_CARD:onIniciarActualizar'
+    const ctx = 'ATM_STARTER_CARD:onIniciarActualizar'
     try {
       if (!id || id <= 0) {
-        console.warn(__tryId, 'ID de solicitud inválido', id)
+        this.logger.warn('ID de solicitud inválido', { ctx, data: { id } })
         return
       }
-      console.log(__tryId, 'OK -> ID Solicitud:', this.tipoAtmCtl.value, id)
+      this.logger.info('OK -> ID Solicitud', { ctx, data: { tipoAtm: this.tipoAtmCtl.value, id } })
       this.router.navigate(['/solicitudes-atm/editar', this.tipoAtmCtl.value, id])
     } catch (error) {
-      console.error(__tryId, error)
+      this.logger.error('EXCEPTION', { ctx, data: error })
     }
   }
 
   onPdfMes() {
     try {
-      console.log('[PADRE-PDF][MES]')
+      this.logger.debug('PDF MES', { ctx: 'SolicitudLista' })
     } catch (e) {
-      console.error(e)
+      this.logger.error('PDF MES ERROR', { ctx: 'SolicitudLista', data: e })
     }
   }
+
   onXlsxMes() {
     try {
-      console.log('[PADRE-XLSX][MES]')
+      this.logger.debug('XLSX MES', { ctx: 'SolicitudLista' })
     } catch (e) {
-      console.error(e)
+      this.logger.error('XLSX MES ERROR', { ctx: 'SolicitudLista', data: e })
     }
   }
+
   onFilterMes(ev: FilterEvent): void {
     try {
-      console.log('[PADRE-FILTER][MES]', ev)
+      this.logger.debug('FILTER MES', { ctx: 'SolicitudLista', data: ev })
     } catch (err) {
-      console.error('[PADRE-FILTER-ERROR][MES]', err)
+      this.logger.error('FILTER MES ERROR', { ctx: 'SolicitudLista', data: err })
     }
   }
-  onPageMes(ev: PageEventLike): void {
-    try {
-      console.log('[PADRE-PAGE][MES]', ev)
-    } catch (err) {
-      console.error('[PADRE-PAGE-ERROR][MES]', err)
-    }
-  }
+
   onActionMes<R extends Row = Row>(ev: ActionEvent<R>): void {
     try {
-      console.log('[PADRE-ACTION][MES]', ev.actionLabel, ev.row)
+      this.logger.debug('ACTION MES', {
+        ctx: 'SolicitudLista',
+        data: { action: ev.actionLabel, row: ev.row },
+      })
     } catch (err) {
-      console.error('[PADRE-ACTION-ERROR][MES]', err)
-    }
-  }
-  onSortMes(ev: SortEvent): void {
-    try {
-      console.log('[PADRE-SORT][MES]', ev)
-    } catch (err) {
-      console.error('[PADRE-SORT-ERROR][MES]', err)
+      this.logger.error('ACTION MES ERROR', { ctx: 'SolicitudLista', data: err })
     }
   }
 
   onPdfPend() {
     try {
-      console.log('[PADRE-PDF][PEND]')
+      this.logger.debug('PDF PEND', { ctx: 'SolicitudLista' })
     } catch (e) {
-      console.error(e)
+      this.logger.error('PDF PEND ERROR', { ctx: 'SolicitudLista', data: e })
     }
   }
   onXlsxPend() {
     try {
-      console.log('[PADRE-XLSX][PEND]')
+      this.logger.debug('XLSX PEND', { ctx: 'SolicitudLista' })
     } catch (e) {
-      console.error(e)
+      this.logger.error('XLSX PEND ERROR', { ctx: 'SolicitudLista', data: e })
     }
   }
   onFilterPend(ev: FilterEvent): void {
     try {
-      console.log('[PADRE-FILTER][PEND]', ev)
+      this.logger.debug('FILTER PEND', { ctx: 'SolicitudLista', data: ev })
     } catch (err) {
-      console.error('[PADRE-FILTER-ERROR][PEND]', err)
+      this.logger.error('FILTER PEND ERROR', { ctx: 'SolicitudLista', data: err })
     }
   }
-  onPagePend(ev: PageEventLike): void {
-    try {
-      console.log('[PADRE-PAGE][PEND]', ev)
-    } catch (err) {
-      console.error('[PADRE-PAGE-ERROR][PEND]', err)
-    }
-  }
+
   onActionPend<R extends Row = Row>(ev: ActionEvent<R>): void {
     try {
-      console.log('[PADRE-ACTION][PEND]', ev.actionLabel, ev.row)
+      this.logger.debug('ACTION PEND', {
+        ctx: 'SolicitudLista',
+        data: { action: ev.actionLabel, row: ev.row },
+      })
     } catch (err) {
-      console.error('[PADRE-ACTION-ERROR][PEND]', err)
-    }
-  }
-  onSortPend(ev: SortEvent): void {
-    try {
-      console.log('[PADRE-SORT][PEND]', ev)
-    } catch (err) {
-      console.error('[PADRE-SORT-ERROR][PEND]', err)
+      this.logger.error('ACTION PEND ERROR', { ctx: 'SolicitudLista', data: err })
     }
   }
 }

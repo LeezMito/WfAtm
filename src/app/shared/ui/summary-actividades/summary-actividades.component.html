@@ -1,1 +1,64 @@
-<article class="summary-actividades w-full"></article>
+@if (data(); as s) {
+<div class="section-card">
+  <h3>{{ s.titulo }}</h3>
+
+  <!-- Bloque 1: Datos principales -->
+  <span>Nombre del sitio a instalar</span>
+  <div class="valor">{{ s.nombreSitio }}</div>
+
+  <span>Región</span>
+  <div class="valor">{{ s.region }}</div>
+
+  <span>Responsable</span>
+  <div class="valor">{{ s.responsable }}</div>
+
+  <span>Fecha Inicio</span>
+  <div class="valor">{{ s.fechaInicio }}</div>
+
+  <span>Fecha Objetivo</span>
+  <div class="valor">{{ s.fechaObjetivo }}</div>
+
+  <span>Días Transcurridos</span>
+  <div class="valor">{{ s.diasTranscurridos }}</div>
+
+  <!-- Avance -->
+  <span>Avance</span>
+  <div class="barra">
+    <div class="fill" [style.width.%]="s.avance"></div>
+  </div>
+  <small>{{ s.avance }}%</small>
+
+  <!-- Compromiso -->
+  <h4>Compromiso</h4>
+
+  <span>Cobertura y servicio</span>
+  <div class="valor">{{ s.coberturaServicio }}</div>
+
+  <!-- Validación Técnica -->
+  <h4>Validación Técnica</h4>
+
+  <span>Responsable Instalación</span>
+  <div class="valor">{{ s.responsableInstalacion }}</div>
+
+  <span>Costo Traslado Valores</span>
+  <div class="valor">{{ s.costoTraslado }}</div>
+
+  <span>Medio de Enlace</span>
+  <div class="valor">{{ s.medioEnlace }}</div>
+
+  <span>Proveedor</span>
+  <div class="valor">{{ s.proveedor }}</div>
+
+  <!-- Validación Visita -->
+  <h4>Validación Visita</h4>
+
+  <span>Escenario Seguridad</span>
+  <div class="valor">{{ s.escenarioSeguridad }}</div>
+
+  <span>Caseta</span>
+  <div class="valor">{{ s.caseta }}</div>
+
+  <span>Monto seguridad</span>
+  <div class="valor">{{ s.montoSeguridad }}</div>
+</div>
+}

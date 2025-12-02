@@ -4,7 +4,7 @@ export interface SolicitudApi {
   bucGrupo: string
   razonSocial: string
   totalATMs: number
-  avanceSolicitud: number // 0.18 = 18 %
+  avanceSolicitud: number
   estatusSolicitud: string
   actividadActual: number
   estatusActividad: string

@@ -1,7 +1,6 @@
-export type LiteralUnion<T extends string> = T | (string & Record<never, never>)
-
-export type TableActionStyle = LiteralUnion<'primary' | 'secondary' | 'accent'>
-export type TableButtonAppearance = LiteralUnion<'outline' | 'fill'>
+export type ActionStyle = 'primary' | 'secondary' | 'accent'
+export type ButtonAppearance = 'outline' | 'fill'
+export type ColumnPipe = 'number' | 'date' | 'uppercase' | 'lowercase' | 'currency'
 
 export interface TableColumn {
   key: string
@@ -9,15 +8,14 @@ export interface TableColumn {
   class?: string
   sorted?: boolean
   includeInFilter?: boolean
-  pipe?: LiteralUnion<'number' | 'date' | 'uppercase' | 'lowercase' | 'currency'>
-}
-
-export interface TableAction {
-  label: string
-  type: TableActionStyle
   icon?: string
-  appearance?: TableButtonAppearance
-  id?: string
+  haveAction?: boolean
+  buttonAppearance?: ButtonAppearance
+  buttonType?: ActionStyle
+  pipe?: ColumnPipe
 }
 
 export type RowLike = Record<string, unknown>
+
+export type FilterEvent = { columns: string[]; query: string }
+export type ActionEvent<R extends RowLike = RowLike> = { actionLabel: string; row: R }

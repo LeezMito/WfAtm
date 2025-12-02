@@ -1,19 +1,25 @@
 @use '_variables.sass' as *
 
+/* ============================
+   TABLE WRAPPER
+   ============================ */
 .table-wrap
   width: 100%
   display: block
-  overflow-x: auto 
+  overflow-x: auto
   -webkit-overflow-scrolling: touch
-  border: 1px solid $border-default
+  border: 1px solid $neutral-300
   border-radius: $radius-lg
-  box-shadow: $shadow-sm
   background: $bg-surface
+  box-shadow: $shadow-sm
 
-  .card & 
-    border: 1px solid $border-default
+  .card &
+    border: 1px solid $neutral-300
     box-shadow: none
 
+/* ============================
+   BASE TABLE
+   ============================ */
 table[mat-table]
   width: 100%
   min-width: 100%
@@ -22,74 +28,100 @@ table[mat-table]
   background: transparent
 
   .mat-header-cell, .mat-cell
-    word-wrap: break-word
-    white-space: normal
-    text-align: left
     padding: $space-3 $space-4
     font-size: $font-size-sm
-    border-bottom: 1px solid $border-default
+    white-space: normal
+    word-wrap: break-word
+    text-align: left
+    border-bottom: 1px solid $neutral-300
 
+/* ============================
+   MDC TABLE LAYER
+   ============================ */
 .mat-mdc-table
   width: 100%
   table-layout: fixed
   background: transparent
-  overflow: visible
 
+  /* HEADER ROW */
   .mat-mdc-header-row
     position: sticky
-    top: 0 
-    z-index: 2
-    background: var(--color-secondary-200)
+    top: 0
+    z-index: 3
+    background: $secondary-200
     font-weight: $font-weight-semibold
-    border-bottom: 1px solid $border-default
+    font-size: $font-size-sm
+    color: $text-primary
+    border-bottom: 1px solid $neutral-300
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04)
 
+  /* BODY ROWS */
   .mat-mdc-row
+    transition: background 0.12s ease
+
     &:nth-child(even)
-      background: var(--color-secondary-100)
+      background: $neutral-100
+
     &:hover
-      background: var(--color-secondary-100)
+      background: $secondary-100
       cursor: pointer
 
+  /* SORT HEADER */
   .mat-sort-header-button
     color: $text-primary
-  .mat-sort-header-arrow
-    color: var(--color-primary)
+    font-weight: $font-weight-medium
 
+  .mat-sort-header-arrow
+    color: $primary-500
+
+  /* CELLS */
   .mat-mdc-cell
     color: $text-secondary
+    font-size: $font-size-sm
 
+  /* COLUMN-SPECIFIC WIDTHS */
   .mat-mdc-header-cell, .mat-mdc-cell
     &.mat-column-id
       min-width: 72px
       text-align: right
+
     &.mat-column-nombre
       min-width: 200px
+
     &.mat-column-monto
       min-width: 120px
       text-align: right
+
     &.mat-column-estado
       min-width: 140px
+
     &.mat-column-acciones
       min-width: 140px
       text-align: center
 
+/* ============================
+   PAGINATOR
+   ============================ */
 .mat-mdc-paginator
-  border: 1px solid $border-default
+  background: $bg-surface
+  border: 1px solid $neutral-300
   border-top: none
   border-radius: 0 0 $radius-lg $radius-lg
-  background: $bg-surface
   box-shadow: $shadow-sm
 
   .mat-mdc-paginator-container
     padding: $space-2 $space-4
-    color: $text-secondary
     font-size: $font-size-sm
+    color: $text-secondary
 
   .mat-mdc-paginator-range-label,
   .mat-mdc-paginator-page-size-label
     color: $text-secondary
 
   .mat-mdc-icon-button
-    color: var(--color-primary)
+    color: $primary-500
+    border-radius: $radius-md
+    transition: background 0.1s ease
+
     &:hover
-      background-color: var(--color-primary-100)
+      background: $primary-100

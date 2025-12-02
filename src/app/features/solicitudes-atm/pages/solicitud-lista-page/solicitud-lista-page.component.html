@@ -41,32 +41,22 @@
     [animationDuration]="disableTabAnimation() ? '0ms' : '300ms'">
     <mat-tab [label]="'Solicitudes del mes ' + mesAnio() + ' en curso'">
       <app-table-smart
-        [rows]="rowsMes()"
-        [columns]="columns"
-        [pageSizeOptions]="[5, 10, 25, 50]"
-        [initialPageSize]="10"
-        [enableClientFiltering]="true"
+        [filas]="rowsMes()"
+        [columnas]="columns"
         (pdfClick)="onPdfMes()"
         (xlsxClick)="onXlsxMes()"
-        (filterChange)="onFilterMes($event)"
-        (pageChange)="onPageMes($event)"
-        (actionClick)="onActionMes($event)"
-        (sortChange)="onSortMes($event)"></app-table-smart>
+        (filtroAplicado)="onFilterMes($event)"
+        (accionEjecutada)="onActionMes($event)"></app-table-smart>
     </mat-tab>
 
     <mat-tab label="Solicitudes pendientes">
       <app-table-smart
-        [rows]="rowsPend()"
-        [columns]="columns"
-        [pageSizeOptions]="[5, 10, 25, 50]"
-        [initialPageSize]="10"
-        [enableClientFiltering]="true"
+        [filas]="rowsPend()"
+        [columnas]="columns"
         (pdfClick)="onPdfPend()"
         (xlsxClick)="onXlsxPend()"
-        (filterChange)="onFilterPend($event)"
-        (pageChange)="onPagePend($event)"
-        (actionClick)="onActionPend($event)"
-        (sortChange)="onSortPend($event)"></app-table-smart>
+        (filtroAplicado)="onFilterPend($event)"
+        (accionEjecutada)="onActionPend($event)"></app-table-smart>
     </mat-tab>
   </mat-tab-group>
 </section>
